@@ -78,6 +78,7 @@ function App() {
   }
   return (
     <div style={{margin:"20px"}}>
+      <Button onClick={()=>dispatch(Getusers())}  >Refresh</Button>
       <Total/>
       <Grid container spacing={3}>
         {usersarr?.map((e: IState) => (

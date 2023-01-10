@@ -2,8 +2,8 @@ import axios from "axios";
 
 import Dexie from "dexie";
 
-const db: any = new Dexie("UsersDatabasearray");
-db.version(10).stores({
+const db: any = new Dexie("UsersDatathis");
+db.version(12).stores({
   usersinfo: "++id,name,age,pick,gender,email",
 });
 
@@ -24,19 +24,26 @@ export const Getusers = () => async (dispatch: any) => {
         email: users[a].email,
       };
       usersdata.push(temp);
-    }
-    await db.usersinfo.count().then((count: number) => {
-      if (count >= 50) {
-        // If the maximum number of entries has been reached, delete the oldest entry
-        db.usersinfo.delete().then(() => {
-          // Insert the new entry
-          db.usersinfo.bulkAdd(usersdata);
-        });
-      } else {
-        // If the maximum number of entries has not been reached, simply insert the new entry
+    } 
+    let count = await db.usersinfo.count();
+    if (count >= 50) {
+     await db.usersinfo.clear()
+     await db.usersinfo.bulkAdd(usersdata)
+        console.log("Cannot add more data - already at maximum capacity");
+    } else {
+        // Add more data here
         db.usersinfo.bulkAdd(usersdata);
-      }
-    });
+    }
+    // await db.usersinfo.count().then((count: number) => {
+    //   console.log(count)
+    //   if (count > 50) {
+    //     db.usersinfo.delete().then(() => {
+    //       db.usersinfo.bulkAdd(usersdata);
+    //     });
+    //   } else {
+    //     db.usersinfo.bulkAdd(usersdata);
+    //   }
+    // });
     console.log(usersdata);
     const usersarray = await db.usersinfo.toArray();
     console.log(usersarray);
